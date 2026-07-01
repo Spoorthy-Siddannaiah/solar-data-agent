@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+.venv/
+.venv*/
+venv/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+backend/*.db
+
+# Generated runtime files
+backend/logs/
+backend/logs/*.jsonl
+generated_documents/
+backend/generated_documents/
+storage/
+backend/storage/
+
+# OS/editor
+.DS_Store
+.vscode/

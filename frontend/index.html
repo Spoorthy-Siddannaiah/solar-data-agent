@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Solar Data Agent Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./app.js?v=3" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Multi-tenant solar operations</p>
+        <h1>Solar Data Agent</h1>
+      </div>
+      <label class="user-picker">
+        <span>Demo user</span>
+        <select id="user-select" aria-label="Demo user">
+          <option value="">Loading users…</option>
+        </select>
+      </label>
+    </header>
+
+    <main>
+      <section class="intro">
+        <div>
+          <p class="eyebrow">Scoped by the backend</p>
+          <h2>Ask questions and generate owned reports.</h2>
+          <p>
+            Select a demo user to explore company-specific plant data and
+            role-based report access.
+          </p>
+        </div>
+        <div id="access-badge" class="access-badge">Select a user</div>
+      </section>
+
+      <div id="notice" class="notice" role="status" aria-live="polite"></div>
+
+      <section class="grid">
+        <article class="panel chat-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Agent</p>
+              <h2>Plant data chat</h2>
+            </div>
+          </div>
+
+          <div id="conversation" class="conversation" aria-live="polite">
+            <p class="placeholder">
+              Try “List my plants” or “Compare my plants for March.”
+            </p>
+          </div>
+
+          <form id="chat-form" class="chat-form">
+            <label for="question">Question</label>
+            <textarea
+              id="question"
+              rows="3"
+              maxlength="4000"
+              placeholder="Ask about accessible plant data…"
+              required
+            ></textarea>
+            <button type="submit" data-needs-user>Ask agent</button>
+          </form>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Files</p>
+              <h2>Generate reports</h2>
+            </div>
+          </div>
+
+          <form id="report-form" class="report-form">
+            <label>
+              <span>Report</span>
+              <select id="report-type">
+                <option value="energy">Energy summary</option>
+                <option value="financial">Financial summary</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Format</span>
+              <select id="report-format">
+                <option value="xlsx">Excel (.xlsx)</option>
+                <option value="pdf">PDF (.pdf)</option>
+                <option value="docx">Word (.docx)</option>
+              </select>
+            </label>
+
+            <label id="month-field" hidden>
+              <span>Month</span>
+              <select id="report-month">
+                <option value="">All available months</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+              </select>
+            </label>
+
+            <button type="submit" data-needs-user>Generate report</button>
+          </form>
+
+          <div class="documents">
+            <h3>Generated this session</h3>
+            <ul id="document-list">
+              <li class="placeholder">No reports generated yet.</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      Demo identity selection is not production authentication.
+    </footer>
+  </body>
+</html>

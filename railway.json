@@ -1,0 +1,8 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "deploy": {
+    "startCommand": "python -m backend.scripts.ingest_data && python -m uvicorn backend.api:app --host 0.0.0.0 --port ${PORT:-8000}",
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 120
+  }
+}
