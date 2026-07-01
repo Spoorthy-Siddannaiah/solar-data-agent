@@ -87,9 +87,11 @@ def run_agent_question(
             database_path=database_path or DATABASE_PATH,
             document_storage_path=document_storage_path or DOCUMENT_STORAGE_PATH,
         )
-    except Exception:
+    except Exception as error:
         tracing.record_agent_run_event(
-            "agent_run_failed", tracing.duration_ms(started_at)
+            "agent_run_failed",
+            tracing.duration_ms(started_at),
+            error=error,
         )
         raise
     tracing.record_agent_run_event(
@@ -117,7 +119,8 @@ def _run_agent_question(
         )
 
     load_dotenv(REPO_ROOT / ".env", override=False)
-    if not os.getenv("OPENAI_API_KEY"):
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    if not api_key:
         raise AgentRunnerError("OPENAI_API_KEY is not configured")
 
     ctx = _load_context(identifier, database_path=database_path)
@@ -135,6 +138,7 @@ def _run_agent_question(
     _register_safe_harness_profile()
     model = ChatOpenAI(
         model=MODEL,
+        api_key=api_key,
         use_responses_api=True,
         store=False,
         model_kwargs={"parallel_tool_calls": False},

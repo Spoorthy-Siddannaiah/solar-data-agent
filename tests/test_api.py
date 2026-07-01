@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -62,6 +63,18 @@ class ApiTests(unittest.TestCase):
             if user["user_id"] == "company_1_operator"
         )
         self.assertFalse(operator["can_view_financials"])
+
+    def test_config_reports_only_openai_key_presence(self) -> None:
+        with patch.dict(os.environ, {"OPENAI_API_KEY": "not-returned"}):
+            configured = self.client.get("/config")
+        with patch.dict(os.environ, {}, clear=True):
+            missing = self.client.get("/config")
+
+        self.assertEqual(
+            configured.json(), {"openai_api_key_configured": True}
+        )
+        self.assertEqual(missing.json(), {"openai_api_key_configured": False})
+        self.assertNotIn("not-returned", configured.text)
 
     def test_frontend_demo_assets_are_served(self) -> None:
         page = self.client.get("/demo/")

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from contextlib import asynccontextmanager
 from dataclasses import asdict
 from datetime import datetime
@@ -157,6 +158,14 @@ def create_app(
     @app.get("/health")
     def health() -> dict:
         return {"status": "ok"}
+
+    @app.get("/config")
+    def config() -> dict:
+        return {
+            "openai_api_key_configured": bool(
+                os.getenv("OPENAI_API_KEY", "").strip()
+            )
+        }
 
     @app.get("/demo-users", response_model=List[DemoUserResponse])
     def demo_users(session: Session = Depends(get_session)) -> list:

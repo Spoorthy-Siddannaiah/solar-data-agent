@@ -62,14 +62,60 @@ def record_tool_call(
     )
 
 
-def record_agent_run_event(event_name: str, total_duration_ms: float) -> None:
-    record_trace_event(
-        {
-            "event": event_name,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "total_duration_ms": total_duration_ms,
-        }
-    )
+def record_agent_run_event(
+    event_name: str,
+    total_duration_ms: float,
+    *,
+    error: BaseException | None = None,
+) -> None:
+    event = {
+        "event": event_name,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "total_duration_ms": total_duration_ms,
+    }
+    if error is not None:
+        event.update(_safe_exception_details(error))
+    record_trace_event(event)
+
+
+def _safe_exception_details(error: BaseException) -> dict[str, str]:
+    """Classify failures without serializing exception text or context."""
+    root = error
+    for _ in range(5):
+        if root.__cause__ is None:
+            break
+        root = root.__cause__
+    exception_class = root.__class__.__name__
+    outer_message = str(error)
+    safe_runner_messages = {
+        "demo database is missing; run the ingestion script first",
+        "OPENAI_API_KEY is not configured",
+        "unsafe agent tool configuration",
+        "agent request failed",
+        "model returned no final text",
+    }
+    if root is error and outer_message in safe_runner_messages:
+        message = outer_message
+    elif exception_class in {"AuthenticationError", "PermissionDeniedError"}:
+        message = "OpenAI authentication failed"
+    elif exception_class in {"APIConnectionError", "ConnectError"}:
+        message = "OpenAI connection failed"
+    elif exception_class in {"APITimeoutError", "TimeoutError"}:
+        message = "OpenAI request timed out"
+    elif exception_class == "RateLimitError":
+        message = "OpenAI rate limit reached"
+    elif exception_class in {"BadRequestError", "UnprocessableEntityError"}:
+        message = "OpenAI request was rejected"
+    elif exception_class in {"ModuleNotFoundError", "ImportError"}:
+        message = "agent dependency is unavailable"
+    elif outer_message in safe_runner_messages:
+        message = outer_message
+    else:
+        message = "agent execution failed"
+    return {
+        "exception_class": exception_class,
+        "error": message,
+    }
 
 
 def record_trace_event(event: Mapping[str, Any]) -> None:

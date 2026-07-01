@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -384,10 +385,39 @@ class ScopedAgentToolTests(unittest.TestCase):
 
         event = self._trace_events()[-1]
         self.assertEqual(event["event"], "agent_run_failed")
+        self.assertEqual(event["exception_class"], "RuntimeError")
+        self.assertEqual(event["error"], "agent request failed")
         self.assertGreaterEqual(event["total_duration_ms"], 0)
         serialized = json.dumps(event)
         self.assertNotIn("company_1_admin", serialized)
         self.assertNotIn("This prompt must not be traced", serialized)
+
+    def test_openai_client_uses_runtime_environment_key(self) -> None:
+        runtime_key = "runtime-key-test-value"
+        captured = {}
+
+        def capture_model(**kwargs: Any) -> object:
+            captured.update(kwargs)
+            return object()
+
+        with patch.dict(os.environ, {"OPENAI_API_KEY": runtime_key}), patch.object(
+            agent_runner, "DATABASE_PATH", self.database
+        ), patch.object(
+            agent_runner, "DOCUMENT_STORAGE_PATH", self.storage
+        ), patch.object(
+            agent_runner, "ChatOpenAI", side_effect=capture_model
+        ), patch.object(
+            agent_runner,
+            "create_deep_agent",
+            return_value=_DeniedFinancialDeepAgent(),
+        ):
+            answer = agent_runner.run_agent_question(
+                "company_1_operator", "What can you do?"
+            )
+
+        self.assertEqual(answer, "Financial access is not permitted.")
+        self.assertEqual(captured["api_key"], runtime_key)
+        self.assertNotIn(runtime_key, self.trace_file.read_text(encoding="utf-8"))
 
     def _trace_events(self) -> list:
         return [
