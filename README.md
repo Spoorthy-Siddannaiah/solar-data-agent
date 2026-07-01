@@ -4,6 +4,22 @@ This repository is being developed phase by phase. The target is a
 multi-tenant AI agent over solar plant operational and financial data, with
 backend-enforced tenant isolation and role-level access.
 
+
+## Deployed Demo
+
+Demo UI: https://invertix-task-production-c848.up.railway.app/demo/
+
+Health check: https://invertix-task-production-c848.up.railway.app/health
+
+Config check: https://invertix-task-production-c848.up.railway.app/config
+
+Demo notes:
+- Select a demo user in the UI before asking questions.
+- `company_1_operator` can query plant/energy data but cannot access financial data.
+- `company_1_admin` can generate financial reports.
+- The Railway deployment uses SQLite and local generated files for demo simplicity. State may reset on restart or redeploy.
+
+
 ## Current Status
 
 The lightweight frontend demo over the secure API, scoped agent, and document
