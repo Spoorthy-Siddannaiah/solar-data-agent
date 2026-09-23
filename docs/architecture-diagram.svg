@@ -1,0 +1,216 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Secure solar data agent flowchart</title>
+  <desc id="desc">A detailed flowchart showing the user experience, secure backend, scoped services, data store, report files, and sanitized traces.</desc>
+  <defs>
+    <filter id="shadow" x="-15%" y="-20%" width="130%" height="150%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#163e34" flood-opacity=".12"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0L10 5 0 10z" fill="#526b65"/>
+    </marker>
+    <marker id="blueArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0L10 5 0 10z" fill="#4478ad"/>
+    </marker>
+    <marker id="orangeArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0L10 5 0 10z" fill="#c98919"/>
+    </marker>
+    <style>
+      .title{font:700 34px Inter,Arial,sans-serif;fill:#153f35}
+      .subtitle{font:400 16px Inter,Arial,sans-serif;fill:#60716d}
+      .boundary-title{font:700 17px Inter,Arial,sans-serif;letter-spacing:.4px}
+      .box-title{font:700 17px Inter,Arial,sans-serif}
+      .box-copy{font:400 13px Inter,Arial,sans-serif}
+      .small-title{font:700 14px Inter,Arial,sans-serif}
+      .small-copy{font:400 12px Inter,Arial,sans-serif}
+      .label{font:600 12px Inter,Arial,sans-serif;fill:#506762}
+      .step{font:700 12px Inter,Arial,sans-serif;fill:white}
+      .note-title{font:700 14px Inter,Arial,sans-serif;fill:#153f35}
+      .note-copy{font:400 12px Inter,Arial,sans-serif;fill:#536762}
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="#fbfcfa"/>
+  <text x="45" y="48" class="title">Secure Solar Data Agent — End-to-End Flow</text>
+  <text x="45" y="77" class="subtitle">The backend identifies the user, limits what the AI can do, and protects every data query and report download.</text>
+
+  <!-- Layer boundaries -->
+  <g>
+    <rect x="175" y="145" width="225" height="570" rx="24" fill="#f2faf5" stroke="#72a58f" stroke-width="2"/>
+    <text x="200" y="179" class="boundary-title" fill="#27634f">USER EXPERIENCE</text>
+
+    <rect x="430" y="105" width="790" height="650" rx="26" fill="#f5f8fc" stroke="#7da2ca" stroke-width="2.5"/>
+    <text x="455" y="140" class="boundary-title" fill="#285888">SECURE BACKEND</text>
+
+    <rect x="945" y="160" width="245" height="540" rx="22" fill="#fff9ec" stroke="#dda842" stroke-width="2"/>
+    <text x="970" y="192" class="boundary-title" fill="#76510d">SAFE TOOLS &amp; SERVICES</text>
+
+    <rect x="1250" y="105" width="305" height="650" rx="26" fill="#f5f7f8" stroke="#91a7af" stroke-width="2.5"/>
+    <text x="1275" y="140" class="boundary-title" fill="#455e67">DATA &amp; OUTPUTS</text>
+  </g>
+
+  <!-- User -->
+  <g transform="translate(35 335)" filter="url(#shadow)">
+    <rect width="110" height="155" rx="22" fill="#153f35"/>
+    <circle cx="55" cy="40" r="17" fill="#dff0e7"/>
+    <path d="M29 96c3-25 14-38 26-38s23 13 26 38" fill="#dff0e7"/>
+    <text x="55" y="131" text-anchor="middle" class="box-title" fill="white">User</text>
+  </g>
+
+  <!-- Frontend -->
+  <g transform="translate(205 260)" filter="url(#shadow)">
+    <rect width="165" height="270" rx="20" fill="white" stroke="#4e8f75" stroke-width="2"/>
+    <circle cx="26" cy="26" r="15" fill="#4e8f75"/><text x="26" y="30" text-anchor="middle" class="step">1</text>
+    <text x="82.5" y="67" text-anchor="middle" class="box-title" fill="#194c3d">Frontend Demo UI</text>
+    <rect x="22" y="91" width="121" height="42" rx="9" fill="#eaf5ef"/>
+    <text x="82.5" y="117" text-anchor="middle" class="small-title" fill="#27634f">Ask questions</text>
+    <rect x="22" y="145" width="121" height="42" rx="9" fill="#eaf5ef"/>
+    <text x="82.5" y="171" text-anchor="middle" class="small-title" fill="#27634f">Create reports</text>
+    <rect x="22" y="199" width="121" height="42" rx="9" fill="#eaf5ef"/>
+    <text x="82.5" y="225" text-anchor="middle" class="small-title" fill="#27634f">Secure downloads</text>
+  </g>
+
+  <!-- API -->
+  <g transform="translate(470 190)" filter="url(#shadow)">
+    <rect width="205" height="125" rx="18" fill="#eaf2fc" stroke="#4478ad" stroke-width="2"/>
+    <circle cx="24" cy="24" r="14" fill="#4478ad"/><text x="24" y="28" text-anchor="middle" class="step">2</text>
+    <text x="102.5" y="53" text-anchor="middle" class="box-title" fill="#204d7b">FastAPI Backend / API</text>
+    <text x="102.5" y="80" text-anchor="middle" class="box-copy" fill="#3d6288">Receives browser requests</text>
+    <text x="102.5" y="101" text-anchor="middle" class="box-copy" fill="#3d6288">and returns answers or files</text>
+  </g>
+
+  <!-- Identity -->
+  <g transform="translate(710 190)" filter="url(#shadow)">
+    <rect width="200" height="125" rx="18" fill="#eaf2fc" stroke="#4478ad" stroke-width="2"/>
+    <circle cx="24" cy="24" r="14" fill="#4478ad"/><text x="24" y="28" text-anchor="middle" class="step">3</text>
+    <text x="100" y="52" text-anchor="middle" class="box-title" fill="#204d7b">Identity &amp; Access</text>
+    <text x="100" y="78" text-anchor="middle" class="box-copy" fill="#3d6288">Loads the stored user</text>
+    <text x="100" y="99" text-anchor="middle" class="box-copy" fill="#3d6288">Company • Role • Permissions</text>
+  </g>
+
+  <!-- Agent -->
+  <g transform="translate(710 390)" filter="url(#shadow)">
+    <rect width="200" height="165" rx="20" fill="#f1eafd" stroke="#8062aa" stroke-width="2"/>
+    <circle cx="24" cy="24" r="14" fill="#8062aa"/><text x="24" y="28" text-anchor="middle" class="step">4</text>
+    <text x="100" y="57" text-anchor="middle" class="box-title" fill="#4f3177">AI Agent</text>
+    <text x="100" y="85" text-anchor="middle" class="box-copy" fill="#654d81">Understands the request</text>
+    <text x="100" y="106" text-anchor="middle" class="box-copy" fill="#654d81">and chooses from approved</text>
+    <text x="100" y="127" text-anchor="middle" class="box-copy" fill="#654d81">tools only</text>
+    <rect x="30" y="139" width="140" height="19" rx="9" fill="#e4d7f6"/>
+    <text x="100" y="153" text-anchor="middle" class="small-copy" fill="#4f3177">No SQL • No filesystem • No shell</text>
+  </g>
+
+  <!-- Services -->
+  <g transform="translate(970 220)">
+    <circle cx="18" cy="18" r="14" fill="#d99a22"/><text x="18" y="22" text-anchor="middle" class="step">5</text>
+    <rect x="0" y="43" width="195" height="78" rx="14" fill="white" stroke="#d99a22" stroke-width="1.8"/>
+    <text x="97.5" y="72" text-anchor="middle" class="small-title" fill="#684708">Plant &amp; Energy Service</text>
+    <text x="97.5" y="94" text-anchor="middle" class="small-copy" fill="#79602d">Lists, summaries, comparisons</text>
+
+    <rect x="0" y="137" width="195" height="78" rx="14" fill="white" stroke="#d99a22" stroke-width="1.8"/>
+    <text x="97.5" y="166" text-anchor="middle" class="small-title" fill="#684708">Financial Service</text>
+    <text x="97.5" y="188" text-anchor="middle" class="small-copy" fill="#9a3f32">Financial permission required</text>
+
+    <rect x="0" y="231" width="195" height="78" rx="14" fill="white" stroke="#d99a22" stroke-width="1.8"/>
+    <text x="97.5" y="260" text-anchor="middle" class="small-title" fill="#684708">Report Service</text>
+    <text x="97.5" y="282" text-anchor="middle" class="small-copy" fill="#79602d">PDF • Excel • Word</text>
+
+    <rect x="0" y="325" width="195" height="78" rx="14" fill="white" stroke="#d99a22" stroke-width="1.8"/>
+    <text x="97.5" y="354" text-anchor="middle" class="small-title" fill="#684708">Run History Service</text>
+    <text x="97.5" y="376" text-anchor="middle" class="small-copy" fill="#79602d">Owned result recovery</text>
+
+    <rect x="0" y="419" width="195" height="69" rx="14" fill="#fff2d4" stroke="#d99a22" stroke-width="1.8"/>
+    <text x="97.5" y="447" text-anchor="middle" class="small-title" fill="#684708">Policy enforced here</text>
+    <text x="97.5" y="468" text-anchor="middle" class="small-copy" fill="#79602d">Company isolation + role access</text>
+  </g>
+
+  <!-- Data store -->
+  <g transform="translate(1280 190)" filter="url(#shadow)">
+    <rect width="245" height="185" rx="20" fill="white" stroke="#78929c" stroke-width="2"/>
+    <ellipse cx="122.5" cy="43" rx="52" ry="15" fill="#dfe7ea" stroke="#78929c" stroke-width="2"/>
+    <path d="M70.5 43v48c0 9 23 16 52 16s52-7 52-16V43" fill="#dfe7ea" stroke="#78929c" stroke-width="2"/>
+    <text x="122.5" y="135" text-anchor="middle" class="box-title" fill="#304850">SQLite Data Store</text>
+    <text x="122.5" y="158" text-anchor="middle" class="box-copy" fill="#536a72">Users • Plants • Readings</text>
+    <text x="122.5" y="177" text-anchor="middle" class="box-copy" fill="#536a72">Financial data • Run metadata</text>
+  </g>
+
+  <!-- Files -->
+  <g transform="translate(1280 430)" filter="url(#shadow)">
+    <rect width="245" height="110" rx="18" fill="white" stroke="#78929c" stroke-width="2"/>
+    <path d="M25 25h36l14 14v46H25zM61 25v14h14" fill="#eef2f3" stroke="#78929c" stroke-width="2"/>
+    <text x="155" y="44" text-anchor="middle" class="box-title" fill="#304850">Generated Reports</text>
+    <text x="155" y="67" text-anchor="middle" class="box-copy" fill="#536a72">Server-created files</text>
+    <text x="155" y="87" text-anchor="middle" class="box-copy" fill="#536a72">Owned secure downloads</text>
+  </g>
+
+  <!-- Logs -->
+  <g transform="translate(1280 600)" filter="url(#shadow)">
+    <rect width="245" height="110" rx="18" fill="white" stroke="#78929c" stroke-width="2"/>
+    <path d="M26 31h42M26 51h42M26 71h42" fill="none" stroke="#78929c" stroke-width="4" stroke-linecap="round"/>
+    <text x="158" y="43" text-anchor="middle" class="box-title" fill="#304850">Sanitized Traces</text>
+    <text x="158" y="67" text-anchor="middle" class="box-copy" fill="#536a72">Tool, status, timing</text>
+    <text x="158" y="87" text-anchor="middle" class="box-copy" fill="#536a72">No secrets or sensitive output</text>
+  </g>
+
+  <!-- Forward flow -->
+  <g fill="none" stroke="#526b65" stroke-width="3" marker-end="url(#arrow)">
+    <path d="M145 412H205"/>
+    <path d="M370 365C420 365 430 252 470 252"/>
+    <path d="M675 252H710"/>
+    <path d="M810 315V390"/>
+    <path d="M910 465H970"/>
+    <path d="M1165 301C1210 301 1220 282 1280 282"/>
+  </g>
+  <text x="157" y="397" class="label">1. Ask</text>
+  <text x="390" y="336" class="label">2. Request + identity</text>
+  <text x="718" y="352" class="label">4. Trusted access context</text>
+
+  <!-- Identity lookup -->
+  <path d="M810 190C810 155 1235 155 1280 225" fill="none" stroke="#4478ad" stroke-width="2.5" marker-end="url(#blueArrow)"/>
+  <text x="1025" y="151" class="label">3. Stored user lookup</text>
+
+  <!-- Service-to-storage flows -->
+  <g fill="none" stroke="#c98919" stroke-width="2.5" marker-end="url(#orangeArrow)">
+    <path d="M1165 395C1210 395 1225 325 1280 325"/>
+    <path d="M1165 489H1280"/>
+    <path d="M1165 583C1215 583 1220 350 1280 350"/>
+  </g>
+  <text x="1180" y="477" class="label">Create file</text>
+  <text x="1172" y="570" class="label">Save owned run</text>
+
+  <!-- Direct report route -->
+  <path d="M572 315V615C572 675 870 675 970 489" fill="none" stroke="#c98919" stroke-width="2.5" marker-end="url(#orangeArrow)"/>
+  <text x="645" y="666" class="label">Direct report request</text>
+
+  <!-- Tracing -->
+  <g fill="none" stroke="#8298a0" stroke-width="2.2" stroke-dasharray="7 7" marker-end="url(#arrow)">
+    <path d="M910 535C1030 735 1200 655 1280 655"/>
+    <path d="M1165 677C1210 677 1230 675 1280 675"/>
+  </g>
+  <text x="1020" y="716" class="label">Sanitized events only</text>
+
+  <!-- Return flow -->
+  <path d="M1280 505C1210 775 610 805 572 315" fill="none" stroke="#4478ad" stroke-width="3" marker-end="url(#blueArrow)"/>
+  <path d="M710 500C650 585 590 565 572 315" fill="none" stroke="#4478ad" stroke-width="3" marker-end="url(#blueArrow)"/>
+  <path d="M470 285C420 285 415 470 370 470" fill="none" stroke="#4478ad" stroke-width="3" marker-end="url(#blueArrow)"/>
+  <path d="M205 470H145" fill="none" stroke="#4478ad" stroke-width="3" marker-end="url(#blueArrow)"/>
+  <text x="612" y="572" class="label">Answer</text>
+  <text x="830" y="795" class="label">7. Ownership-checked report download</text>
+  <text x="382" y="493" class="label">Show answer or file</text>
+
+  <!-- Bottom security notes -->
+  <g transform="translate(70 820)">
+    <rect width="420" height="58" rx="16" fill="#eef5fc" stroke="#8db1d7"/>
+    <text x="20" y="25" class="note-title">Access is checked in the backend</text>
+    <text x="20" y="44" class="note-copy">The selected user never controls company scope.</text>
+  </g>
+  <g transform="translate(535 820)">
+    <rect width="450" height="58" rx="16" fill="#fff8e9" stroke="#ddb45a"/>
+    <text x="20" y="25" class="note-title">Services enforce company and financial access</text>
+    <text x="20" y="44" class="note-copy">Checks happen before data is queried or a report is created.</text>
+  </g>
+  <g transform="translate(1030 820)">
+    <rect width="500" height="58" rx="16" fill="#f3f5f6" stroke="#a2b1b7"/>
+    <text x="20" y="25" class="note-title">Reports are generated server-side</text>
+    <text x="20" y="44" class="note-copy">Downloads require matching company, user, run, and document ownership.</text>
+  </g>
+</svg>

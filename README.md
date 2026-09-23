@@ -1,77 +1,92 @@
 # Multi-Tenant Solar Data Agent
 
-A small multi-tenant AI agent demo for querying solar plant operational and financial data.
+A security-focused FastAPI application that lets users ask questions about solar plant operations, generate real reports, and access financial data only when their role allows it.
 
-The system focuses on backend-enforced tenant isolation, role-based financial access, scoped agent tools, and downloadable PDF/DOCX/XLSX reports.
+This project is designed as a compact portfolio demo of backend architecture for AI-assisted data products: tenant isolation is enforced in services and database queries, the model only receives narrow scoped tools, and generated documents are stored behind ownership checks.
 
-## Deployed Demo
+## Highlights
 
-Demo UI: https://invertix-task-production-c848.up.railway.app/demo/
+- Built a multi-tenant backend with FastAPI, SQLite, SQLAlchemy, and explicit `UserContext` authorization.
+- Integrated LangChain Deep Agents with GPT-backed orchestration while keeping SQL, filesystem, shell, and tenant identifiers away from the model.
+- Implemented role-based access so energy-only users cannot query or receive financial data, including in tool results, API responses, documents, traces, or model context.
+- Generated downloadable PDF, DOCX, and XLSX reports instead of UI-only previews.
+- Protected document downloads with company, user, run, and document ownership checks.
+- Added deterministic and mocked orchestration tests for tenant boundaries, tool visibility, financial restrictions, report creation, and sanitized tracing.
+- Included architecture, API, agent, document, and evaluation notes for reviewability.
 
-Health check: https://invertix-task-production-c848.up.railway.app/health
+## Product Scope
 
-Config check: https://invertix-task-production-c848.up.railway.app/config
+The app supports two demo tenants, each with users, solar plants, plant telemetry, market prices, and monthly costs.
 
-## Demo Users
+Demo roles:
 
-- `company_1_operator` — can query plant and energy data, but cannot access financial data
-- `company_1_admin` — can query plant, energy, and financial data, and can generate financial reports
-- `company_2_operator` — same role as operator, scoped to company 2
-- `company_2_admin` — same role as admin, scoped to company 2
+- `company_1_operator`: plant and energy access only
+- `company_1_admin`: plant, energy, financial, and report access
+- `company_2_operator`: plant and energy access only, scoped to company 2
+- `company_2_admin`: plant, energy, financial, and report access, scoped to company 2
 
-## What Is Implemented
+The demo identity mechanism uses `X-Demo-User` so reviewers can exercise authorization flows without signing in. Production authentication is intentionally documented as future work.
 
-- Ingestion of the provided two-company solar dataset into SQLite
-- Tenant-qualified schema for companies, users, plants, elements, datasources, readings, market prices, and monthly costs
-- Backend-derived `UserContext`; the frontend never sends `company_id`
-- Tenant-scoped plant and energy query services
-- Permission-gated financial query services
-- LangChain Deep Agents + GPT-5 orchestration
-- Restricted model-callable tools only
-- No raw SQL, shell, broad filesystem tools, or company/user IDs exposed to the model
-- Real PDF, DOCX, and XLSX report generation
-- Ownership-checked document downloads by company, user, run, and document
-- FastAPI routes for health, demo users, chat, reports, runs, and downloads
-- Minimal frontend demo with chat, report generation, download buttons, and refresh recovery
-- Sanitized JSONL trace logging for agent runs
-- Railway deployment configuration
-
-## Not Implemented / Limitations
-
-- Production authentication is not implemented; `X-Demo-User` is used only for demo identity selection
-- The UI is intentionally minimal and not production-grade
-- True background worker queue for long-running jobs is not implemented
-- Live streaming/progress events are not implemented
-- Railway uses SQLite and local generated files for demo simplicity
-- State may reset on restart or redeploy
-- Production should use Postgres, object storage, real authentication, and a durable worker queue
-
-## Architecture Summary
-
-The main flow is:
+## Architecture
 
 ```text
-Frontend Demo
+Browser demo
   -> FastAPI API
-  -> Backend-derived UserContext
-  -> LangChain Deep Agent
-  -> Scoped service tools
-  -> Tenant-filtered database queries / report generation
-  -> Answer or owned document download
+  -> Backend-created UserContext
+  -> Authorization checks
+  -> Scoped services
+  -> Narrow agent tools
+  -> Tenant-filtered SQLite queries / document generation
+  -> API response or owned document download
 ```
 
-Important security boundary:
+Core security rule:
 
 ```text
 The LLM is not trusted for isolation.
-Tenant and role access are enforced in backend services and data access layers.
+Tenant and role restrictions are enforced by backend code and database query scope.
 ```
 
-The model only receives scoped tools. It does not receive raw database access, company IDs, user IDs, SQL tools, shell tools, or broad filesystem tools.
+The agent can call only curated application tools such as plant listing, energy summaries, financial summaries for authorized users, and report creation. It never receives raw SQL access, company IDs, user IDs, filesystem tools, or shell tools.
+
+## What Is Implemented
+
+- Data ingestion from the bundled demo dataset into SQLite
+- Tenant-qualified schema for companies, users, plants, elements, datasources, readings, market prices, monthly costs, agent runs, and generated documents
+- Backend-derived authentication context from stored demo users
+- Tenant-scoped plant and energy services
+- Permission-gated financial services
+- LangChain Deep Agents orchestration with restricted model-callable tools
+- Real PDF, DOCX, and XLSX report generation
+- Ownership-checked report download endpoints
+- Minimal browser demo for chat, report generation, downloads, and refresh recovery
+- Sanitized JSONL trace logging for agent runs
+- Railway-compatible deployment configuration
+- Unit, API, service, deterministic agent, and mocked orchestration tests
+
+## Not Implemented
+
+- Production authentication and session management
+- Durable background worker queue for long-running jobs
+- Streaming progress events
+- Production database and object storage
+- Multi-replica deployment with shared generated document storage
+
+For production, I would replace demo headers with OIDC or signed sessions, move SQLite to Postgres, store generated files in object storage, and run report/agent work through a durable queue.
+
+## Tech Stack
+
+- Python 3.11+
+- FastAPI
+- SQLAlchemy 2
+- SQLite
+- LangChain Deep Agents
+- OpenAI chat models
+- ReportLab, python-docx, and openpyxl
+- Pytest
+- Vanilla HTML/CSS/JavaScript frontend
 
 ## Run Locally
-
-Requires Python 3.11 or newer.
 
 Create and activate a virtual environment:
 
@@ -82,13 +97,17 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-Set the API key locally:
+Configure the OpenAI API key:
 
 ```bash
-export OPENAI_API_KEY="your-key-here"
+cp .env.example .env
 ```
 
-Alternatively, use a repository-root `.env` file. The `.env` file is ignored and must not be committed.
+Then edit `.env`:
+
+```text
+OPENAI_API_KEY=your-key-here
+```
 
 Ingest the demo data:
 
@@ -102,39 +121,37 @@ Run the API:
 python -m uvicorn backend.api:app --reload
 ```
 
-Open the frontend demo:
+Open the demo:
 
 ```text
 http://127.0.0.1:8000/demo/
 ```
 
-Run tests:
+Run the tests:
 
 ```bash
 python -m pytest -q
 ```
 
-## CLI Usage
+## CLI Example
 
 After ingestion, ask the scoped agent from the command line:
 
 ```bash
 python -m backend.scripts.ask_agent \
   --user company_1_admin \
-  --question "List my plants"
+  --question "Compare my plants for March"
 ```
 
-The user may be a stored demo user ID or email. The CLI does not accept a company ID. Tenant identity and permissions are loaded from the database.
+The CLI accepts a stored demo user ID or email. It does not accept a company ID; tenant identity and permissions are loaded from the database.
 
-## API Usage
+## API Overview
 
-Protected routes use the stored demo user ID or email through the demo header:
+Protected routes use the demo identity header:
 
 ```text
 X-Demo-User: company_1_operator
 ```
-
-The backend derives company and permissions from the stored user. Requests do not accept company IDs.
 
 Useful endpoints:
 
@@ -149,78 +166,37 @@ GET  /runs/{run_id}
 GET  /documents/{document_id}/download
 ```
 
-See `docs/API.md` for more details.
+See `docs/API.md` for request and response details.
 
-## Document Generation
+## Security Behaviors To Try
 
-The system can generate real reports in:
+1. Select `company_1_operator` and ask: `List my plants`
+   Expected: only company 1 plants are returned.
 
-```text
-PDF
-DOCX
-XLSX
-```
+2. Select `company_1_operator` and ask: `Show monthly costs`
+   Expected: financial access is denied and no financial values are returned.
 
-Energy reports are available to energy-enabled users. Financial reports are only available to users with financial permission.
+3. Select `company_1_operator` and ask about plant `2001`
+   Expected: the resource is treated as unavailable without revealing another tenant.
 
-Generated documents are owned by company, user, run, and document metadata. Downloads are checked against this ownership before returning a file.
+4. Select `company_1_admin` and ask: `Create a financial PDF report for March`
+   Expected: the report is generated and the download works.
 
-See `docs/DOCUMENTS.md` for details.
+5. Try downloading a report with another user's run or document ID
+   Expected: the API returns the same not-found response used for missing documents.
 
-## Deployment
+## Documentation
 
-Railway configuration is committed in `railway.json`.
+- `ARCHITECTURE.md`: system design, tenant isolation, role access, and tradeoffs
+- `DATA_NOTES.md`: source data inspection and ingestion assumptions
+- `docs/AGENT_SLICE.md`: agent setup, scoped tools, tracing, and limitations
+- `docs/API.md`: FastAPI routes and demo identity header
+- `docs/DOCUMENTS.md`: PDF/DOCX/XLSX generation and secure downloads
+- `docs/EVALUATION.md`: deterministic, mocked, and manual evaluation strategy
+- `docs/ARCHITECTURE_DIAGRAM.md`: architecture diagram source and rendered SVG
+- `docs/DATA_STRUCTURE_DIAGRAM.md`: demo data and schema relationship diagram
+- `frontend/SMOKE_TEST.md`: browser smoke test checklist
 
-The deployment start command ingests the bundled demo data and starts FastAPI:
+## Repository Safety
 
-```bash
-python -m backend.scripts.ingest_data && \
-python -m uvicorn backend.api:app --host 0.0.0.0 --port ${PORT:-8000}
-```
-
-Railway service variable required:
-
-```text
-OPENAI_API_KEY=...
-```
-
-Do not commit `.env` or API keys.
-
-Keep the Railway demo to one replica because SQLite and generated documents are local to the container filesystem.
-
-## Suggested Smoke Test
-
-After local run or Railway deployment:
-
-```text
-1. Open /health
-   Expected: {"status":"ok"}
-
-2. Open /demo/
-
-3. Select company_1_operator
-   Ask: "List my plants"
-   Expected: only company 1 plants
-
-4. Select company_1_operator
-   Ask: "Show monthly costs"
-   Expected: financial access denied
-
-5. Select company_1_admin
-   Ask: "Create a financial PDF report for March"
-   Expected: report is created and download works
-
-6. Refresh the page
-   Expected: completed result/report can be recovered
-```
-
-## Additional Documentation
-
-- `ARCHITECTURE.md` — system design, tenant isolation, role access, and tradeoffs
-- `DATA_NOTES.md` — source data inspection and ingestion assumptions
-- `docs/AGENT_SLICE.md` — Deep Agents setup, scoped tools, tracing, and limitations
-- `docs/API.md` — FastAPI routes and demo identity header
-- `docs/DOCUMENTS.md` — PDF/DOCX/XLSX generation and secure downloads
-- `docs/EVALUATION.md` — manual agent decision evaluation matrix
-- `frontend/SMOKE_TEST.md` — frontend smoke test checklist
-- `coding-agent-sessions/` — coding-agent session history
+Secrets, local databases, generated documents, trace logs, virtual environments, and assignment/session notes are ignored. The committed `.env.example` contains only a placeholder key.

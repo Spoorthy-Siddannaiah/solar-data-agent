@@ -27,6 +27,9 @@ backend/generated_documents/
 storage/
 backend/storage/
 
+# Local-only assignment/session notes and scratch scripts
+.local-task-originals/
+
 # OS/editor
 .DS_Store
 .vscode/
